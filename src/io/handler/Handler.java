@@ -1,7 +1,7 @@
 package io.handler;
 
-public interface Handler {
-	void handle();
+public interface Handler<S> {
 
-	String getName();
+	void handle(S s);
+
 }

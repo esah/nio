@@ -7,20 +7,10 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.Socket;
 
-public class SocketHandler implements Handler {
-
-	private final Socket socket;
-
-	public SocketHandler(final Socket socket) {
-		this.socket = socket;
-	}
-
-	public static Handler of(final Socket socket) {
-		return new SocketHandler(socket);
-	}
+public class SocketHandler implements Handler<Socket> {
 
 	@Override
-	public void handle() {
+	public void handle(Socket socket) {
 		try (socket;
 			 InputStream in = socket.getInputStream();
 			 OutputStream out = socket.getOutputStream()) {
@@ -34,9 +24,4 @@ public class SocketHandler implements Handler {
 		}
 	}
 
-
-	@Override
-	public String getName() {
-		return socket.toString();
-	}
 }
