@@ -3,18 +3,16 @@ package io.handler;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-public class UncheckedIOExceptionConverterHandler<S> implements Handler<S> {
-
-	private final Handler<S> handler;
+public class UncheckedIOExceptionConverterHandler<S> extends DecoratedHandler<S> {
 
 	public UncheckedIOExceptionConverterHandler(final Handler<S> handler) {
-		this.handler = handler;
+		super(handler);
 	}
 
 	@Override
 	public void handle(final S s) {
 		try {
-			handler.handle(s);
+			super.handle(s);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

@@ -17,7 +17,11 @@ class SocketServer {
 		final ServerSocket ss = new ServerSocket(port);
 
 		while (true) {
-			handler.handle(ss.accept());
+			try {
+				handler.handle(ss.accept());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
