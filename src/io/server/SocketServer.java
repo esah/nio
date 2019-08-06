@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 class SocketServer {
-	private final int port = 8081;
+	private static final int port = 8081;
 	private final Handler<Socket> handler;
 
 	public SocketServer(final Handler<Socket> handler) {
@@ -15,7 +15,6 @@ class SocketServer {
 
 	void start() throws IOException {
 		final ServerSocket ss = new ServerSocket(port);
-
 		while (true) {
 			try {
 				handler.handle(ss.accept());

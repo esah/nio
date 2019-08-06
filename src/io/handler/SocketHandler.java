@@ -16,6 +16,9 @@ public class SocketHandler implements Handler<Socket> {
 			//in.transferTo(out);
 			int data;
 			while ((data = in.read()) != -1) {
+				if (data == '%') {
+					throw new IOException("Ops, special case %");
+				}
 				out.write(Util.transmogrify(data));
 			}
 		}
