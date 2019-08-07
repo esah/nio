@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ExecutorServiceBlookingServer {
+public class ExecutorServiceBlockingServer {
 
 	public static void main(String[] args) throws IOException {
 		final ExecutorService pool = Executors.newCachedThreadPool();

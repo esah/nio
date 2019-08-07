@@ -12,8 +12,11 @@ public class LoggingHandler<S> extends DecoratedHandler<S> {
 
 	public void handle(S s) throws IOException {
 		System.out.println("Connected " + connections.incrementAndGet() + " from " + s);
-		super.handle(s);
-		System.out.println("Disconnected " + connections.getAndDecrement() + "from " + s);
+		try {
+			super.handle(s);
+		} finally {
+			System.out.println("Disconnected " + connections.getAndDecrement() + "from " + s);
+		}
 	}
 
 }
