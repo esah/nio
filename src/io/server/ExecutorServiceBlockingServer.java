@@ -12,15 +12,11 @@ import java.util.concurrent.Executors;
 public class ExecutorServiceBlockingServer {
 
 	public static void main(String[] args) throws IOException {
+
 		final ExecutorService pool = Executors.newFixedThreadPool(10);
-		final Thread.UncaughtExceptionHandler exHandler = (t, e) -> System.out.println(t + ": " + e);
 
 		final Handler<Socket> handler =
-				new ExecutorServiceHandler<>(
-						new LoggingHandler<>(
-								new SocketHandler()
-						), pool, exHandler
-				);
+				new ExecutorServiceHandler<>(new LoggingHandler<>(new SocketHandler()), pool);
 
 		new SocketServer(handler).start();
 	}

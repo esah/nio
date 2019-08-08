@@ -17,6 +17,11 @@ public class ExecutorServiceHandler<S> extends DecoratedHandler<S> {
 		this.exceptionHandler = exceptionHandler;
 	}
 
+	public ExecutorServiceHandler(final Handler<S> handler,
+								  final ExecutorService pool) {
+		this(handler, pool, (t, e) -> System.out.println(t + ": " + e));
+	}
+
 	@Override
 	public void handle(final S s) throws IOException {
 		pool.submit(new FutureTask<>(() -> {
