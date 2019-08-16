@@ -19,7 +19,7 @@ public class TransmogrifyChannelHandler implements Handler<SocketChannel> {
 			while (buffer.hasRemaining()) {
 				channel.write(buffer);
 			}
-			buffer.compact();
+			//buffer.compact(); -- create any time
 		}
 		if (read == -1) {
 			channel.close();

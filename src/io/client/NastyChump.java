@@ -19,7 +19,7 @@ public class NastyChump {
 			System.out.println("Started " + sockets[i]);
 		}
 
-		Thread.sleep(60_000);
+		Thread.sleep(60_000 * 60);
 
 	}
 
