@@ -2,7 +2,7 @@ package io.server;
 
 import io.handler.Handler;
 import io.handler.LoggingHandler;
-import io.handler.SocketHandler;
+import io.handler.TransmogrifySocketHandler;
 import io.handler.ThreadedHandler;
 import io.handler.UncheckedIOExceptionConverterHandler;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class MultiThreadedBlockingServer {
 				new ThreadedHandler<>(
 						new UncheckedIOExceptionConverterHandler<>(
 								new LoggingHandler<>(
-										new SocketHandler()
+										new TransmogrifySocketHandler()
 								)
 						)
 				);
