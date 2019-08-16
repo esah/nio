@@ -12,12 +12,9 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class NioBlockingServer {
+public class BlockingNIOServer {
 
 	public static void main(String[] args) throws IOException {
-
-		ServerSocketChannel channel = ServerSocketChannel.open();
-		channel.bind(new InetSocketAddress(8081));
 
 		final Handler<SocketChannel> handler =
 				new ExecutorServiceHandler<>(
@@ -25,16 +22,10 @@ public class NioBlockingServer {
 								new BlockingChannelHandler(
 										new TransmogrifyChannelHandler()
 								))
+
 						, Executors.newFixedThreadPool(10));
 
-		while (true) {
-			try {
-				handler.handle(channel.accept());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
+		new ChannelServer(handler).start();
 	}
 
 }
