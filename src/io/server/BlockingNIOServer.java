@@ -6,10 +6,7 @@ import io.handler.Handler;
 import io.handler.LoggingHandler;
 import io.handler.TransmogrifyChannelHandler;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class BlockingNIOServer {
@@ -25,7 +22,7 @@ public class BlockingNIOServer {
 
 						, Executors.newFixedThreadPool(10));
 
-		new ChannelServer(handler).start();
+		new ChannelServer(handler, true).start();
 	}
 
 }
