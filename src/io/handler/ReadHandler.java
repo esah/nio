@@ -23,6 +23,7 @@ public class ReadHandler implements Handler<SelectionKey> {
 		ByteBuffer buffer = ByteBuffer.allocate(80);
 		int read = sc.read(buffer);
 		if (read == -1) {
+			System.out.println("Disconnected from " + sc + " from read");
 			data.remove(sc);
 			sc.close();
 			return;

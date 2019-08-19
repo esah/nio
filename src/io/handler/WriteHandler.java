@@ -28,6 +28,7 @@ public class WriteHandler implements Handler<SelectionKey> {
 			final int written = sc.write(buf);
 
 			if (written == -1) {
+				System.out.println("Disconnected from " + sc + " from write");
 				sc.close();
 				data.remove(sc); //clear queue
 				return;

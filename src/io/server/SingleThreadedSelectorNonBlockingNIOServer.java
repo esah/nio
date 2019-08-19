@@ -8,6 +8,7 @@ import io.handler.WriteHandler;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -15,6 +16,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -45,7 +47,26 @@ public class SingleThreadedSelectorNonBlockingNIOServer {
 			selector.select(); //blocks until smth happened
 
 			Set<SelectionKey> keys = selector.selectedKeys();
-			//TODO continue
+
+			for (final Iterator<SelectionKey> it = keys.iterator(); it.hasNext(); ) {
+				final SelectionKey key = it.next();
+				it.remove();
+				try {
+					if (key.isValid()) {
+						if (key.isAcceptable()) {
+							acceptHandler.handle(key);
+						} else if (key.isReadable()) {
+							readHandler.handle(key);
+						} else if (key.isWritable()) {
+							writeHandler.handle(key);
+						}
+					}
+				} catch (CancelledKeyException e) {
+					System.out.println("Key cancelled " + key);
+
+				}
+			}
+
 
 		}
 
