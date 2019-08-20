@@ -2,8 +2,7 @@ package io.server;
 
 import io.handler.AcceptHandler;
 import io.handler.Handler;
-import io.handler.ReadHandler;
-import io.handler.TransmogrifyChannelHandler;
+import io.handler.PoolReadHandler;
 import io.handler.WriteHandler;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,15 +12,16 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class SingleThreadedSelectorNonBlockingNIOServer {
+public class SelectorWithWorkPoolNonBlockingNIOServer {
 
 	public static void main(String[] args) throws IOException {
 
@@ -31,23 +31,22 @@ public class SingleThreadedSelectorNonBlockingNIOServer {
 
 		Selector selector = Selector.open();
 		channel.register(selector, SelectionKey.OP_ACCEPT);
-		//ACCEPT - some client connected and we accepted the connection
-		//READ - we are reading
-		//WRITE - we are trying to write and the socket is ready for writing
 
 
-		final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>(); //no inter thread communication, only 1 thread
+		ExecutorService pool = Executors.newFixedThreadPool(10);
+		Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
+		final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
 
 		final Handler<SelectionKey> acceptHandler = new AcceptHandler(pendingData);
-		final Handler<SelectionKey> readHandler = new ReadHandler(pendingData);
+		final Handler<SelectionKey> readHandler = new PoolReadHandler(pool, selectorActions, pendingData);
 		final Handler<SelectionKey> writeHandler = new WriteHandler(pendingData);
 
-
 		while (true) {
-			selector.select(); //blocks until smth happened
+			selector.select();
+
+			processSelectorActions(selectorActions);
 
 			Set<SelectionKey> keys = selector.selectedKeys();
-
 			for (final Iterator<SelectionKey> it = keys.iterator(); it.hasNext(); ) {
 				final SelectionKey key = it.next();
 				it.remove();
@@ -70,6 +69,13 @@ public class SingleThreadedSelectorNonBlockingNIOServer {
 
 		}
 
+	}
+
+	private static void processSelectorActions(final Queue<Runnable> actions) {
+		Runnable action;
+		while ((action = actions.poll()) != null) {
+			action.run();
+		}
 	}
 
 }
