@@ -1,5 +1,6 @@
-package io.handler;
+package io.handler.nio.selector;
 
+import io.handler.Handler;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
